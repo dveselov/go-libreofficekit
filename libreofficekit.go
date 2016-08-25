@@ -34,15 +34,15 @@ type Office struct {
 	handle *C.struct__LibreOfficeKit
 }
 
-func NewOffice(libreofficePath string) (*Office, error) {
+func NewOffice(path string) (*Office, error) {
 	office := new(Office)
 
-	path := C.CString(libreofficePath)
-	defer C.free(unsafe.Pointer(path))
+	c_path := C.CString(path)
+	defer C.free(unsafe.Pointer(c_path))
 
-	lokit := C.lok_init(path)
+	lokit := C.lok_init(c_path)
 	if lokit == nil {
-		return nil, fmt.Errorf("Failed to initialize LibreOfficeKit with libreofficePath: '%s'", libreofficePath)
+		return nil, fmt.Errorf("Failed to initialize LibreOfficeKit with path: '%s'", path)
 	}
 
 	office.handle = lokit
