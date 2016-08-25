@@ -52,7 +52,8 @@ func NewOffice(libreofficePath string) (*Office, error) {
 }
 
 func (self *Office) Close() {
-	C.destroy_bridge(self.handle.pClass.destroy, unsafe.Pointer(self.handle))
+	selfPointer := unsafe.Pointer(self.handle)
+	C.destroy_bridge(self.handle.pClass.destroy, selfPointer)
 }
 
 func (self *Office) LoadDocument(path string) *Document {
@@ -69,15 +70,21 @@ type Document struct {
 }
 
 func (self *Document) Close() {
-	C.destroy_bridge(self.handle.pClass.destroy, unsafe.Pointer(self.handle))
+	selfPointer := unsafe.Pointer(self.handle)
+	C.destroy_bridge(self.handle.pClass.destroy, selfPointer)
 }
 
-func (self *Document) SaveAs(path string, format string, filter string) {
+func (self *Document) SaveAs(path string, format string, filter string) error {
 	c_path := C.CString(path)
 	defer C.free(unsafe.Pointer(c_path))
 	c_format := C.CString(format)
 	defer C.free(unsafe.Pointer(c_format))
 	c_filter := C.CString(filter)
 	defer C.free(unsafe.Pointer(c_filter))
-	C.document_save_bridge(self.handle.pClass.saveAs, self.handle, c_path, c_format, c_filter)
+	status := C.document_save_bridge(self.handle.pClass.saveAs, self.handle, c_path, c_format, c_filter)
+	if status != 0 {
+		return fmt.Errorf("Failed to save document")
+	} else {
+		return nil
+	}
 }
