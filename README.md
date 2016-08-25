@@ -9,9 +9,9 @@ package main
 import "github.com/docsbox/go-libreofficekit"
 
 func main() {
-    office := libreofficekit.NewOffice("/path/to/libreoffice")
-    document := office.LoadDocument("kittens.docx")
-    err := document.SaveAs("kittens.pdf", "pdf", "skipImages")
+    office, _ := libreofficekit.NewOffice("/path/to/libreoffice")
+    document, _ := office.LoadDocument("kittens.docx")
+    document.SaveAs("kittens.pdf", "pdf", "skipImages")
 }
 
 ```

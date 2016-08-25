@@ -56,13 +56,16 @@ func (self *Office) Close() {
 	C.destroy_bridge(self.handle.pClass.destroy, selfPointer)
 }
 
-func (self *Office) LoadDocument(path string) *Document {
+func (self *Office) LoadDocument(path string) (*Document, error) {
 	document := new(Document)
 	c_path := C.CString(path)
 	defer C.free(unsafe.Pointer(c_path))
 	handle := C.document_load_bridge(self.handle.pClass.documentLoad, self.handle, c_path)
+	if handle == nil {
+		return nil, fmt.Errorf("Failed to load document")
+	}
 	document.handle = handle
-	return document
+	return document, nil
 }
 
 type Document struct {
