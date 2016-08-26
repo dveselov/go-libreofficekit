@@ -23,6 +23,12 @@ char* get_error_bridge(charFunc f, LibreOfficeKit* pThis) {
 int get_document_type_bridge(intFunc f, LibreOfficeKitDocument* pThis) {
 	return f(pThis);
 };
+void get_document_size_bridge(voidFunc f,
+							LibreOfficeKitDocument* pThis,
+							long* pWidth,
+							long* pHeight) {
+	return f(pThis, pWidth, pHeight);
+};
 int document_save_bridge(intFunc f,
 						LibreOfficeKitDocument* pThis,
 						const char* pUrl,
@@ -65,6 +71,13 @@ func (self *Office) Close() {
 
 func (self *Office) GetError() string {
 	return C.GoString(C.get_error_bridge(self.handle.pClass.getError, self.handle))
+}
+
+func (self *Document) GetSize() (int, int) {
+	width := C.long(0)
+	heigth := C.long(0)
+	C.get_document_size_bridge(self.handle.pClass.getDocumentSize, self.handle, &width, &heigth)
+	return int(width), int(heigth)
 }
 
 func (self *Office) LoadDocument(path string) (*Document, error) {
