@@ -3,6 +3,9 @@ Cgo bindings to LibreOfficeKit
 
 # Install
 ```bash 
+# Latest version of LibreOffice (5.2) is required
+$ add-apt-repository ppa:libreoffice/ppa 
+$ sudo apt-get update
 $ apt-get install libreoffice libreofficekit-dev
 $ go get github.com/docsbox/go-libreofficekit
 ```
