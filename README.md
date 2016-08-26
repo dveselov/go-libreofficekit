@@ -1,4 +1,4 @@
-# go-libreofficekit
+# go-libreofficekit [![](https://godoc.org/github.com/docsbox/go-libreofficekit?status.svg)](https://godoc.org/github.com/docsbox/go-libreofficekit)
 Cgo bindings to LibreOfficeKit
 
 # Install
