@@ -1,6 +1,6 @@
 package libreofficekit
 
-// #cgo CFLAGS: -I /usr/include/LibreOfficeKit/
+// #cgo CFLAGS: -I /usr/include/LibreOfficeKit/ -D LOK_USE_UNSTABLE_API
 // #cgo LDFLAGS: -ldl
 // #include <stdlib.h>
 // #include "LibreOfficeKit/LibreOfficeKitInit.h"
@@ -18,6 +18,9 @@ LibreOfficeKitDocument* document_load_bridge(voidFunc f,
 	f(pThis, pURL);
 };
 char* get_error_bridge(charFunc f, LibreOfficeKit* pThis) {
+	return f(pThis);
+};
+int get_document_type_bridge(intFunc f, LibreOfficeKitDocument* pThis) {
 	return f(pThis);
 };
 int document_save_bridge(intFunc f,
@@ -76,6 +79,14 @@ func (self *Office) LoadDocument(path string) (*Document, error) {
 	return document, nil
 }
 
+const (
+	TextDocument = iota
+	SpreadsheetDocument
+	PresentationDocument
+	DrawingDocument
+	OtherDocument
+)
+
 type Document struct {
 	handle *C.struct__LibreOfficeKitDocument
 }
@@ -83,6 +94,10 @@ type Document struct {
 func (self *Document) Close() {
 	selfPointer := unsafe.Pointer(self.handle)
 	C.destroy_bridge(self.handle.pClass.destroy, selfPointer)
+}
+
+func (self *Document) GetType() int {
+	return int(C.get_document_type_bridge(self.handle.pClass.getDocumentType, self.handle))
 }
 
 func (self *Document) SaveAs(path string, format string, filter string) error {
