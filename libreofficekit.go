@@ -8,6 +8,7 @@ package libreofficekit
 /*
 typedef void (*voidFunc) ();
 typedef int (*intFunc) ();
+typedef char* (*charFunc) ();
 void destroy_bridge(voidFunc f, void* handle) {
 	return f(handle);
 };
@@ -15,6 +16,9 @@ LibreOfficeKitDocument* document_load_bridge(voidFunc f,
 											 LibreOfficeKit* pThis,
 											 const char* pURL) {
 	f(pThis, pURL);
+};
+char* get_error_bridge(charFunc f, LibreOfficeKit* pThis) {
+	return f(pThis);
 };
 int document_save_bridge(intFunc f,
 						LibreOfficeKitDocument* pThis,
@@ -54,6 +58,10 @@ func NewOffice(path string) (*Office, error) {
 func (self *Office) Close() {
 	selfPointer := unsafe.Pointer(self.handle)
 	C.destroy_bridge(self.handle.pClass.destroy, selfPointer)
+}
+
+func (self *Office) GetError() string {
+	return C.GoString(C.get_error_bridge(self.handle.pClass.getError, self.handle))
 }
 
 func (self *Office) LoadDocument(path string) (*Document, error) {
