@@ -29,6 +29,24 @@ void get_document_size_bridge(voidFunc f,
 							long* pHeight) {
 	return f(pThis, pWidth, pHeight);
 };
+void set_document_part_bridge(voidFunc f,
+							LibreOfficeKitDocument* pThis,
+							int nPart) {
+	return f(pThis, nPart);
+};
+
+char* get_document_part_name_bridge(charFunc f,
+							LibreOfficeKitDocument* pThis,
+							int nPart) {
+	return f(pThis, nPart);
+};
+
+void initialize_for_rendering_bridge(voidFunc f,
+									LibreOfficeKitDocument* pThis,
+									const char* pArguments) {
+	return f(pThis, pArguments);
+};
+
 int document_save_bridge(intFunc f,
 						LibreOfficeKitDocument* pThis,
 						const char* pUrl,
@@ -73,17 +91,6 @@ func (self *Office) GetError() string {
 	return C.GoString(C.get_error_bridge(self.handle.pClass.getError, self.handle))
 }
 
-func (self *Document) GetParts() int {
-	return int(C.get_document_bridge(self.handle.pClass.getParts, self.handle))
-}
-
-func (self *Document) GetSize() (int, int) {
-	width := C.long(0)
-	heigth := C.long(0)
-	C.get_document_size_bridge(self.handle.pClass.getDocumentSize, self.handle, &width, &heigth)
-	return int(width), int(heigth)
-}
-
 func (self *Office) LoadDocument(path string) (*Document, error) {
 	document := new(Document)
 	c_path := C.CString(path)
@@ -115,6 +122,39 @@ func (self *Document) Close() {
 
 func (self *Document) GetType() int {
 	return int(C.get_document_bridge(self.handle.pClass.getDocumentType, self.handle))
+}
+
+func (self *Document) GetParts() int {
+	return int(C.get_document_bridge(self.handle.pClass.getParts, self.handle))
+}
+
+func (self *Document) GetPart() int {
+	return int(C.get_document_bridge(self.handle.pClass.getPart, self.handle))
+}
+
+func (self *Document) SetPart(part int) {
+	c_part := C.int(part)
+	C.set_document_part_bridge(self.handle.pClass.setPart, self.handle, c_part)
+}
+
+func (self *Document) GetPartName(part int) string {
+	c_part := C.int(part)
+	c_part_name := C.get_document_part_name_bridge(self.handle.pClass.getPartName, self.handle, c_part)
+	defer C.free(unsafe.Pointer(c_part_name))
+	return C.GoString(c_part_name)
+}
+
+func (self *Document) GetSize() (int, int) {
+	width := C.long(0)
+	heigth := C.long(0)
+	C.get_document_size_bridge(self.handle.pClass.getDocumentSize, self.handle, &width, &heigth)
+	return int(width), int(heigth)
+}
+
+func (self *Document) InitializeForRendering(arguments string) {
+	c_arguments := C.CString(arguments)
+	defer C.free(unsafe.Pointer(c_arguments))
+	C.initialize_for_rendering_bridge(self.handle.pClass.initializeForRendering, self.handle, c_arguments)
 }
 
 func (self *Document) SaveAs(path string, format string, filter string) error {
