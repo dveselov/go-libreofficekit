@@ -7,12 +7,16 @@ void destroy_office(LibreOfficeKit* pThis) {
     return pThis->pClass->destroy(pThis);
 };
 
-LibreOfficeKitDocument* document_load(LibreOfficeKit* pThis, const char* pURL) {
-    return pThis->pClass->documentLoad(pThis, pURL);
-};
-
 char* get_error(LibreOfficeKit* pThis) {
     return pThis->pClass->getError(pThis);
+};
+
+char* get_filter_types(LibreOfficeKit* pThis) {
+    return pThis->pClass->getFilterTypes(pThis);
+};
+
+LibreOfficeKitDocument* document_load(LibreOfficeKit* pThis, const char* pURL) {
+    return pThis->pClass->documentLoad(pThis, pURL);
 };
 
 void destroy_document(LibreOfficeKitDocument* pThis) {
@@ -48,4 +52,16 @@ void initialize_for_rendering(LibreOfficeKitDocument* pThis, const char* pArgume
 
 int document_save(LibreOfficeKitDocument* pThis, const char* pUrl, const char* pFormat, const char* pFilterOptions) {
     return pThis->pClass->saveAs(pThis, pUrl, pFormat, pFilterOptions);
+};
+
+int create_view(LibreOfficeKitDocument* pThis) {
+    return pThis->pClass->createView(pThis);
+};
+
+int get_view(LibreOfficeKitDocument* pThis) {
+    return pThis->pClass->getView(pThis);
+};
+
+int get_views(LibreOfficeKitDocument* pThis) {
+    return pThis->pClass->getViews(pThis);
 };

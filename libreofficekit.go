@@ -56,6 +56,12 @@ func (self *Office) LoadDocument(path string) (*Document, error) {
 	return document, nil
 }
 
+func (self *Office) GetFilters() string {
+	filters := C.get_filter_types(self.handle)
+	defer C.free(unsafe.Pointer(filters))
+	return C.GoString(filters)
+}
+
 // Types of documents returned by Document.GetType function
 const (
 	TextDocument = iota
@@ -133,4 +139,16 @@ func (self *Document) SaveAs(path string, format string, filter string) error {
 	} else {
 		return nil
 	}
+}
+
+func (self *Document) CreateView() int {
+	return int(C.create_view(self.handle))
+}
+
+func (self *Document) GetView() int {
+	return int(C.get_view(self.handle))
+}
+
+func (self *Document) GetViews() int {
+	return int(C.get_views(self.handle))
 }
