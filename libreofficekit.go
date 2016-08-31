@@ -36,19 +36,19 @@ func NewOffice(path string) (*Office, error) {
 }
 
 func (self *Office) Close() {
-	selfPointer := unsafe.Pointer(self.handle)
-	C.destroy_bridge(self.handle.pClass.destroy, selfPointer)
+	C.destroy_office(self.handle)
 }
 
 func (self *Office) GetError() string {
-	return C.GoString(C.get_error_bridge(self.handle.pClass.getError, self.handle))
+	message := C.get_error(self.handle)
+	return C.GoString(message)
 }
 
 func (self *Office) LoadDocument(path string) (*Document, error) {
 	document := new(Document)
 	c_path := C.CString(path)
 	defer C.free(unsafe.Pointer(c_path))
-	handle := C.document_load_bridge(self.handle.pClass.documentLoad, self.handle, c_path)
+	handle := C.document_load(self.handle, c_path)
 	if handle == nil {
 		return nil, fmt.Errorf("Failed to load document")
 	}
@@ -69,30 +69,28 @@ type Document struct {
 }
 
 func (self *Document) Close() {
-	selfPointer := unsafe.Pointer(self.handle)
-	C.destroy_bridge(self.handle.pClass.destroy, selfPointer)
+	C.destroy_document(self.handle)
 }
 
 func (self *Document) GetType() int {
-	return int(C.get_document_bridge(self.handle.pClass.getDocumentType, self.handle))
+	return int(C.get_document_type(self.handle))
 }
 
 func (self *Document) GetParts() int {
-	return int(C.get_document_bridge(self.handle.pClass.getParts, self.handle))
+	return int(C.get_document_parts(self.handle))
 }
 
 func (self *Document) GetPart() int {
-	return int(C.get_document_bridge(self.handle.pClass.getPart, self.handle))
+	return int(C.get_document_part(self.handle))
 }
 
 func (self *Document) SetPart(part int) {
-	c_part := C.int(part)
-	C.set_document_part_bridge(self.handle.pClass.setPart, self.handle, c_part)
+	C.set_document_part(self.handle, C.int(part))
 }
 
 func (self *Document) GetPartName(part int) string {
 	c_part := C.int(part)
-	c_part_name := C.get_document_part_name_bridge(self.handle.pClass.getPartName, self.handle, c_part)
+	c_part_name := C.get_document_part_name(self.handle, c_part)
 	defer C.free(unsafe.Pointer(c_part_name))
 	return C.GoString(c_part_name)
 }
@@ -100,14 +98,14 @@ func (self *Document) GetPartName(part int) string {
 func (self *Document) GetSize() (int, int) {
 	width := C.long(0)
 	heigth := C.long(0)
-	C.get_document_size_bridge(self.handle.pClass.getDocumentSize, self.handle, &width, &heigth)
+	C.get_document_size(self.handle, &width, &heigth)
 	return int(width), int(heigth)
 }
 
 func (self *Document) InitializeForRendering(arguments string) {
 	c_arguments := C.CString(arguments)
 	defer C.free(unsafe.Pointer(c_arguments))
-	C.initialize_for_rendering_bridge(self.handle.pClass.initializeForRendering, self.handle, c_arguments)
+	C.initialize_for_rendering(self.handle, c_arguments)
 }
 
 func (self *Document) SaveAs(path string, format string, filter string) error {
@@ -117,7 +115,7 @@ func (self *Document) SaveAs(path string, format string, filter string) error {
 	defer C.free(unsafe.Pointer(c_format))
 	c_filter := C.CString(filter)
 	defer C.free(unsafe.Pointer(c_filter))
-	status := C.document_save_bridge(self.handle.pClass.saveAs, self.handle, c_path, c_format, c_filter)
+	status := C.document_save(self.handle, c_path, c_format, c_filter)
 	if status != 0 {
 		return fmt.Errorf("Failed to save document")
 	} else {

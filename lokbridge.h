@@ -3,51 +3,49 @@
 #include "LibreOfficeKit/LibreOfficeKit.h"
 
 
-typedef void (*voidFunc) ();
-typedef int (*intFunc) ();
-typedef char* (*charFunc) ();
-void destroy_bridge(voidFunc f, void* handle) {
-    return f(handle);
-};
-LibreOfficeKitDocument* document_load_bridge(voidFunc f,
-                                             LibreOfficeKit* pThis,
-                                             const char* pURL) {
-    f(pThis, pURL);
-};
-char* get_error_bridge(charFunc f, LibreOfficeKit* pThis) {
-    return f(pThis);
-};
-int get_document_bridge(intFunc f, LibreOfficeKitDocument* pThis) {
-    return f(pThis);
-};
-void get_document_size_bridge(voidFunc f,
-                            LibreOfficeKitDocument* pThis,
-                            long* pWidth,
-                            long* pHeight) {
-    return f(pThis, pWidth, pHeight);
-};
-void set_document_part_bridge(voidFunc f,
-                            LibreOfficeKitDocument* pThis,
-                            int nPart) {
-    return f(pThis, nPart);
+void destroy_office(LibreOfficeKit* pThis) {
+    return pThis->pClass->destroy(pThis);
 };
 
-char* get_document_part_name_bridge(charFunc f,
-                            LibreOfficeKitDocument* pThis,
-                            int nPart) {
-    return f(pThis, nPart);
+LibreOfficeKitDocument* document_load(LibreOfficeKit* pThis, const char* pURL) {
+    return pThis->pClass->documentLoad(pThis, pURL);
 };
 
-void initialize_for_rendering_bridge(voidFunc f,
-                                    LibreOfficeKitDocument* pThis,
-                                    const char* pArguments) {
-    return f(pThis, pArguments);
+char* get_error(LibreOfficeKit* pThis) {
+    return pThis->pClass->getError(pThis);
 };
 
-int document_save_bridge(intFunc f,
-                        LibreOfficeKitDocument* pThis,
-                        const char* pUrl,
-                        const char* pFormat,
-                        const char* pFilterOptions) {
-    return f(pThis, pUrl, pFormat, pFilterOptions);
+void destroy_document(LibreOfficeKitDocument* pThis) {
+    return pThis->pClass->destroy(pThis);
+};
+
+void get_document_size(LibreOfficeKitDocument* pThis, long* pWidth, long* pHeight) {
+    return pThis->pClass->getDocumentSize(pThis, pWidth, pHeight);
+};
+void set_document_part(LibreOfficeKitDocument* pThis, int nPart) {
+    return pThis->pClass->setPart(pThis, nPart);
+};
+
+int get_document_type(LibreOfficeKitDocument* pThis) {
+    return pThis->pClass->getDocumentType(pThis);
+};
+
+int get_document_parts(LibreOfficeKitDocument* pThis) {
+    return pThis->pClass->getParts(pThis);
+};
+
+int get_document_part(LibreOfficeKitDocument* pThis) {
+    return pThis->pClass->getPart(pThis);
+};
+
+char* get_document_part_name(LibreOfficeKitDocument* pThis, int nPart) {
+    return pThis->pClass->getPartName(pThis, nPart);
+};
+
+void initialize_for_rendering(LibreOfficeKitDocument* pThis, const char* pArguments) {
+    return pThis->pClass->initializeForRendering(pThis, pArguments);
+};
+
+int document_save(LibreOfficeKitDocument* pThis, const char* pUrl, const char* pFormat, const char* pFilterOptions) {
+    return pThis->pClass->saveAs(pThis, pUrl, pFormat, pFilterOptions);
 };
