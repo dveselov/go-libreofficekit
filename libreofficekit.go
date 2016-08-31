@@ -56,6 +56,7 @@ func (self *Office) LoadDocument(path string) (*Document, error) {
 	return document, nil
 }
 
+// Types of documents returned by Document.GetType function
 const (
 	TextDocument = iota
 	SpreadsheetDocument
@@ -72,22 +73,28 @@ func (self *Document) Close() {
 	C.destroy_document(self.handle)
 }
 
+// Returns type of loaded document
 func (self *Document) GetType() int {
 	return int(C.get_document_type(self.handle))
 }
 
+// Returns count of slides (for presentations) or pages (for text documents)
 func (self *Document) GetParts() int {
 	return int(C.get_document_parts(self.handle))
 }
 
+// GetPart returns current part of document, e.g.
+// if document was just loaded it's current part will be 0
 func (self *Document) GetPart() int {
 	return int(C.get_document_part(self.handle))
 }
 
+// SetPart updates current part of document
 func (self *Document) SetPart(part int) {
 	C.set_document_part(self.handle, C.int(part))
 }
 
+// Returns current slide title (for presentations) or page title (for text documents)
 func (self *Document) GetPartName(part int) string {
 	c_part := C.int(part)
 	c_part_name := C.get_document_part_name(self.handle, c_part)
@@ -95,6 +102,8 @@ func (self *Document) GetPartName(part int) string {
 	return C.GoString(c_part_name)
 }
 
+// GetSize returns width and height of document in twips (1 Twip = 1/1440th of an inch)
+// You can convert twips to pixels by this formula: (width or height) * (1.0 / 1440.0) * DPI
 func (self *Document) GetSize() (int, int) {
 	width := C.long(0)
 	heigth := C.long(0)
@@ -102,12 +111,15 @@ func (self *Document) GetSize() (int, int) {
 	return int(width), int(heigth)
 }
 
+// Must be called before performing any rendering-related actions
 func (self *Document) InitializeForRendering(arguments string) {
 	c_arguments := C.CString(arguments)
 	defer C.free(unsafe.Pointer(c_arguments))
 	C.initialize_for_rendering(self.handle, c_arguments)
 }
 
+// Saves document at desired path in desired format with applied filter rules
+// Actual (from libreoffice) error message can be read with Office.GetError
 func (self *Document) SaveAs(path string, format string, filter string) error {
 	c_path := C.CString(path)
 	defer C.free(unsafe.Pointer(c_path))
