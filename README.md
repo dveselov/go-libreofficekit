@@ -53,3 +53,38 @@ func main() {
     office.Close()
 }
 ```
+
+```go
+package main
+
+import (
+    "bufio"
+    "os"
+    "image"
+    "image/png"
+)
+import "github.com/docsbox/go-libreofficekit"
+
+func main() {
+    office, _ := libreofficekit.NewOffice("/path/to/libreoffice")
+    
+    document, _ := office.LoadDocument("kittens.docx")
+    width, height := document.GetSize()
+    canvasWidth := TwipsToPixels(width, 100)
+    canvasHeight := TwipsToPixels(height, 100)
+    buf := make([]_Ctype_uchar, 4*canvasWidth*canvasHeight)
+    document.PaintTile(buf, canvasWidth, canvasHeight, 0, 0, width, height)
+    m := image.NewRGBA(image.Rect(0, 0, canvasWidth, canvasHeight))
+    pixels := make([]uint8, len(buf))
+    for i := 0; i < len(buf); i++ {
+        pixels[i] = (uint8)(buf[i])
+    }
+    m.Pix = pixels
+    out, _ := os.Create("output.png")
+    defer out.Close()
+    outBuf := bufio.NewWriter(out)
+    png.Encode(out, m)
+    document.Close()
+    office.Close()
+}
+```

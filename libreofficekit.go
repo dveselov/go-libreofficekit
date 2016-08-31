@@ -12,6 +12,10 @@ import (
 	"unsafe"
 )
 
+func TwipsToPixels(twips int, dpi int) int {
+	return int(float64(twips) * (1.0 / 1440.0) * float64(dpi))
+}
+
 type Office struct {
 	handle *C.struct__LibreOfficeKit
 	mutex  *sync.Mutex
@@ -154,4 +158,17 @@ func (document *Document) GetView() int {
 // GetViews returns total number of views in document
 func (document *Document) GetViews() int {
 	return int(C.get_views(document.handle))
+}
+
+func (document *Document) PaintTile(buf []C.uchar, canvasWidth int, canvasHeight int, tilePosX int, tilePosY int, tileWidth int, tileHeight int) {
+	C.paint_tile(
+		document.handle,
+		(*C.uchar)(unsafe.Pointer(&buf[0])),
+		(C.int)(canvasWidth),
+		(C.int)(canvasHeight),
+		(C.int)(tilePosX),
+		(C.int)(tilePosY),
+		(C.int)(tileWidth),
+		(C.int)(tileHeight),
+	)
 }
