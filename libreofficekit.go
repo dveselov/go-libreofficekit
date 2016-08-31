@@ -20,10 +20,10 @@ type Office struct {
 func NewOffice(path string) (*Office, error) {
 	office := new(Office)
 
-	c_path := C.CString(path)
-	defer C.free(unsafe.Pointer(c_path))
+	cPath := C.CString(path)
+	defer C.free(unsafe.Pointer(cPath))
 
-	lokit := C.lok_init(c_path)
+	lokit := C.lok_init(cPath)
 	if lokit == nil {
 		return nil, fmt.Errorf("Failed to initialize LibreOfficeKit with path: '%s'", path)
 	}
@@ -35,20 +35,20 @@ func NewOffice(path string) (*Office, error) {
 
 }
 
-func (self *Office) Close() {
-	C.destroy_office(self.handle)
+func (office *Office) Close() {
+	C.destroy_office(office.handle)
 }
 
-func (self *Office) GetError() string {
-	message := C.get_error(self.handle)
+func (office *Office) GetError() string {
+	message := C.get_error(office.handle)
 	return C.GoString(message)
 }
 
-func (self *Office) LoadDocument(path string) (*Document, error) {
+func (office *Office) LoadDocument(path string) (*Document, error) {
 	document := new(Document)
-	c_path := C.CString(path)
-	defer C.free(unsafe.Pointer(c_path))
-	handle := C.document_load(self.handle, c_path)
+	cPath := C.CString(path)
+	defer C.free(unsafe.Pointer(cPath))
+	handle := C.document_load(office.handle, cPath)
 	if handle == nil {
 		return nil, fmt.Errorf("Failed to load document")
 	}
@@ -56,8 +56,8 @@ func (self *Office) LoadDocument(path string) (*Document, error) {
 	return document, nil
 }
 
-func (self *Office) GetFilters() string {
-	filters := C.get_filter_types(self.handle)
+func (office *Office) GetFilters() string {
+	filters := C.get_filter_types(office.handle)
 	defer C.free(unsafe.Pointer(filters))
 	return C.GoString(filters)
 }
@@ -75,80 +75,83 @@ type Document struct {
 	handle *C.struct__LibreOfficeKitDocument
 }
 
-func (self *Document) Close() {
-	C.destroy_document(self.handle)
+// Close destroys document
+func (document *Document) Close() {
+	C.destroy_document(document.handle)
 }
 
-// Returns type of loaded document
-func (self *Document) GetType() int {
-	return int(C.get_document_type(self.handle))
+// GetType returns type of loaded document
+func (document *Document) GetType() int {
+	return int(C.get_document_type(document.handle))
 }
 
-// Returns count of slides (for presentations) or pages (for text documents)
-func (self *Document) GetParts() int {
-	return int(C.get_document_parts(self.handle))
+// GetParts returns count of slides (for presentations) or pages (for text documents)
+func (document *Document) GetParts() int {
+	return int(C.get_document_parts(document.handle))
 }
 
 // GetPart returns current part of document, e.g.
 // if document was just loaded it's current part will be 0
-func (self *Document) GetPart() int {
-	return int(C.get_document_part(self.handle))
+func (document *Document) GetPart() int {
+	return int(C.get_document_part(document.handle))
 }
 
 // SetPart updates current part of document
-func (self *Document) SetPart(part int) {
-	C.set_document_part(self.handle, C.int(part))
+func (document *Document) SetPart(part int) {
+	C.set_document_part(document.handle, C.int(part))
 }
 
-// Returns current slide title (for presentations) or page title (for text documents)
-func (self *Document) GetPartName(part int) string {
-	c_part := C.int(part)
-	c_part_name := C.get_document_part_name(self.handle, c_part)
-	defer C.free(unsafe.Pointer(c_part_name))
-	return C.GoString(c_part_name)
+// GetPartName returns current slide title (for presentations) or page title (for text documents)
+func (document *Document) GetPartName(part int) string {
+	cPart := C.int(part)
+	cPartName := C.get_document_part_name(document.handle, cPart)
+	defer C.free(unsafe.Pointer(cPartName))
+	return C.GoString(cPartName)
 }
 
 // GetSize returns width and height of document in twips (1 Twip = 1/1440th of an inch)
 // You can convert twips to pixels by this formula: (width or height) * (1.0 / 1440.0) * DPI
-func (self *Document) GetSize() (int, int) {
+func (document *Document) GetSize() (int, int) {
 	width := C.long(0)
 	heigth := C.long(0)
-	C.get_document_size(self.handle, &width, &heigth)
+	C.get_document_size(document.handle, &width, &heigth)
 	return int(width), int(heigth)
 }
 
-// Must be called before performing any rendering-related actions
-func (self *Document) InitializeForRendering(arguments string) {
-	c_arguments := C.CString(arguments)
-	defer C.free(unsafe.Pointer(c_arguments))
-	C.initialize_for_rendering(self.handle, c_arguments)
+// InitializeForRendering must be called before performing any rendering-related actions
+func (document *Document) InitializeForRendering(arguments string) {
+	cArguments := C.CString(arguments)
+	defer C.free(unsafe.Pointer(cArguments))
+	C.initialize_for_rendering(document.handle, cArguments)
 }
 
-// Saves document at desired path in desired format with applied filter rules
+// SaveAs saves document at desired path in desired format with applied filter rules
 // Actual (from libreoffice) error message can be read with Office.GetError
-func (self *Document) SaveAs(path string, format string, filter string) error {
-	c_path := C.CString(path)
-	defer C.free(unsafe.Pointer(c_path))
-	c_format := C.CString(format)
-	defer C.free(unsafe.Pointer(c_format))
-	c_filter := C.CString(filter)
-	defer C.free(unsafe.Pointer(c_filter))
-	status := C.document_save(self.handle, c_path, c_format, c_filter)
+func (document *Document) SaveAs(path string, format string, filter string) error {
+	cPath := C.CString(path)
+	defer C.free(unsafe.Pointer(cPath))
+	cFormat := C.CString(format)
+	defer C.free(unsafe.Pointer(cFormat))
+	cFilter := C.CString(filter)
+	defer C.free(unsafe.Pointer(cFilter))
+	status := C.document_save(document.handle, cPath, cFormat, cFilter)
 	if status != 0 {
 		return fmt.Errorf("Failed to save document")
-	} else {
-		return nil
 	}
+	return nil
 }
 
-func (self *Document) CreateView() int {
-	return int(C.create_view(self.handle))
+// CreateView return id if newly created view
+func (document *Document) CreateView() int {
+	return int(C.create_view(document.handle))
 }
 
-func (self *Document) GetView() int {
-	return int(C.get_view(self.handle))
+// GetView returns current document view id
+func (document *Document) GetView() int {
+	return int(C.get_view(document.handle))
 }
 
-func (self *Document) GetViews() int {
-	return int(C.get_views(self.handle))
+// GetViews returns total number of views in document
+func (document *Document) GetViews() int {
+	return int(C.get_views(document.handle))
 }
