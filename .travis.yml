@@ -1,6 +1,8 @@
 sudo: required
 language: go
+go:
+  - 1.7
 before_install:
-  - sudo add-apt-repository -y ppa:libreoffice/ppa 
+  - sudo add-apt-repository -y ppa:libreoffice/libreoffice-5-2
   - sudo apt-get update
   - sudo apt-get install libreoffice libreofficekit-dev
