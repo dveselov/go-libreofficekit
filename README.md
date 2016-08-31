@@ -28,3 +28,28 @@ func main() {
 }
 
 ```
+
+```go
+package main
+
+import "fmt"
+import "github.com/docsbox/go-libreofficekit"
+
+func main() {
+    office, _ := libreofficekit.NewOffice("/path/to/libreoffice")
+    
+    document, _ := office.LoadDocument("kittens.pptx")
+    slidesCount := document.GetParts()
+
+    for i := 1; i < slidesCount; i++ {
+        document.SetPart(i)
+        currentPart = document.GetPart()
+        fmt.Println("Current slide =", currentPart)
+        currentPartName = document.GetPartName(i)
+        fmt.Println("Current slide title =", currentPartName)
+    }
+
+    document.Close()
+    office.Close()
+}
+```
