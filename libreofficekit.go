@@ -58,11 +58,13 @@ int document_save_bridge(intFunc f,
 import "C"
 import (
 	"fmt"
+	"sync"
 	"unsafe"
 )
 
 type Office struct {
 	handle *C.struct__LibreOfficeKit
+	mutex  *sync.Mutex
 }
 
 func NewOffice(path string) (*Office, error) {
@@ -77,6 +79,7 @@ func NewOffice(path string) (*Office, error) {
 	}
 
 	office.handle = lokit
+	office.mutex = &sync.Mutex{}
 
 	return office, nil
 
