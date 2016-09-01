@@ -75,6 +75,11 @@ const (
 	OtherDocument
 )
 
+const (
+	RGBATilemode = iota
+	BGRATilemode
+)
+
 type Document struct {
 	handle *C.struct__LibreOfficeKitDocument
 }
@@ -158,6 +163,10 @@ func (document *Document) GetView() int {
 // GetViews returns total number of views in document
 func (document *Document) GetViews() int {
 	return int(C.get_views(document.handle))
+}
+
+func (document *Document) GetTileMode() int {
+	return int(C.get_tile_mode(document.handle))
 }
 
 func (document *Document) PaintTile(buf []C.uchar, canvasWidth int, canvasHeight int, tilePosX int, tilePosY int, tileWidth int, tileHeight int) {

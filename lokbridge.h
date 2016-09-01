@@ -69,3 +69,7 @@ int get_views(LibreOfficeKitDocument* pThis) {
 void paint_tile(LibreOfficeKitDocument* pThis, unsigned char* pBuffer, const int nCanvasWidth, const int nCanvasHeight, const int nTilePosX, const int nTilePosY, const int nTileWidth, const int nTileHeight) {
     return pThis->pClass->paintTile(pThis, pBuffer, nCanvasWidth, nCanvasHeight, nTilePosX, nTilePosY, nTileWidth, nTileHeight);
 };
+
+int get_tile_mode(LibreOfficeKitDocument* pThis){
+    return pThis->pClass->getTileMode(pThis);
+};
