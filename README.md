@@ -54,6 +54,8 @@ func main() {
 }
 ```
 
+Next example demonstrates how to use built-in LibreOffice rendering (result will looks like [this](http://i.imgur.com/GozPaFc.png)).
+
 ```go
 package main
 
@@ -69,9 +71,11 @@ func main() {
     office, _ := libreofficekit.NewOffice("/path/to/libreoffice")
     
     document, _ := office.LoadDocument("kittens.docx")
+    // Get document width & height, in twips (1 twip = 1/1440 of inch)
     width, height := document.GetSize()
-    canvasWidth := TwipsToPixels(width, 100)
-    canvasHeight := TwipsToPixels(height, 100)
+    // Convert document width/height to pixels with DPI = 100
+    canvasWidth := libreofficekit.TwipsToPixels(width, 100)
+    canvasHeight := libreofficekit.TwipsToPixels(height, 100)
     buf := make([]_Ctype_uchar, 4*canvasWidth*canvasHeight)
     document.PaintTile(buf, canvasWidth, canvasHeight, 0, 0, width, height)
     m := image.NewRGBA(image.Rect(0, 0, canvasWidth, canvasHeight))
