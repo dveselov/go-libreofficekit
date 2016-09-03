@@ -70,6 +70,10 @@ void paint_tile(LibreOfficeKitDocument* pThis, unsigned char* pBuffer, const int
     return pThis->pClass->paintTile(pThis, pBuffer, nCanvasWidth, nCanvasHeight, nTilePosX, nTilePosY, nTileWidth, nTileHeight);
 };
 
-int get_tile_mode(LibreOfficeKitDocument* pThis){
+int get_tile_mode(LibreOfficeKitDocument* pThis) {
     return pThis->pClass->getTileMode(pThis);
+};
+
+char* get_part_page_rectangles(LibreOfficeKitDocument* pThis) {
+    return pThis->pClass->getPartPageRectangles(pThis);
 };

@@ -8,6 +8,9 @@ package libreofficekit
 import "C"
 import (
 	"fmt"
+	"image"
+	"strconv"
+	"strings"
 	"sync"
 	"unsafe"
 )
@@ -167,6 +170,24 @@ func (document *Document) GetViews() int {
 
 func (document *Document) GetTileMode() int {
 	return int(C.get_tile_mode(document.handle))
+}
+
+func (document *Document) GetPartPageRectangles() []image.Rectangle {
+	var rectangles []image.Rectangle
+	rawRectangles := C.GoString(C.get_part_page_rectangles(document.handle))
+	pageRectangles := strings.Split(rawRectangles, ";")
+	for _, points := range pageRectangles {
+		var intPoints []int
+		strPoints := strings.Split(points, ",")
+		for _, point := range strPoints {
+			point = strings.Trim(point, " ")
+			i, _ := strconv.Atoi(point)
+			intPoints = append(intPoints, i)
+		}
+		x0, y0, x1, y1 := intPoints[0], intPoints[1], intPoints[2], intPoints[3]
+		rectangles = append(rectangles, image.Rect(x0, y0, x1, y1))
+	}
+	return rectangles
 }
 
 func (document *Document) PaintTile(buf []C.uchar, canvasWidth int, canvasHeight int, tilePosX int, tilePosY int, tileWidth int, tileHeight int) {
