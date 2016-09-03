@@ -12,6 +12,8 @@ $ go get github.com/docsbox/go-libreofficekit
 
 # Usage
 
+This example demonstrates how to convert Microsoft Office document to PDF
+
 ```go
 package main
 
@@ -28,6 +30,8 @@ func main() {
 }
 
 ```
+
+This example demonstrates how to get presentation slides titles
 
 ```go
 package main
