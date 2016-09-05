@@ -15,8 +15,13 @@ import (
 	"unsafe"
 )
 
+// TwipsToPixels converts given twips to pixels with given dpi & zoom
 func TwipsToPixels(twips int, dpi int) int {
-	return int(float64(twips) * (1.0 / 1440.0) * float64(dpi))
+	return int(float32(twips) / 1440.0 * float32(dpi))
+}
+
+func PixelsToTwips(pixels int, dpi int) int {
+	return int((float32(pixels) / float32(dpi)) * 1440.0)
 }
 
 type Office struct {
@@ -190,6 +195,7 @@ func (document *Document) GetPartPageRectangles() []image.Rectangle {
 	return rectangles
 }
 
+// PaintTile renders tile to given buf (which size must be a `4 * canvasWidth * canvasHeight`)
 func (document *Document) PaintTile(buf []C.uchar, canvasWidth int, canvasHeight int, tilePosX int, tilePosY int, tileWidth int, tileHeight int) {
 	C.paint_tile(
 		document.handle,
