@@ -15,13 +15,20 @@ import (
 	"unsafe"
 )
 
-// TwipsToPixels converts given twips to pixels with given dpi & zoom
+// TwipsToPixels converts given twips to pixels with given dpi
 func TwipsToPixels(twips int, dpi int) int {
 	return int(float32(twips) / 1440.0 * float32(dpi))
 }
 
 func PixelsToTwips(pixels int, dpi int) int {
 	return int((float32(pixels) / float32(dpi)) * 1440.0)
+}
+
+// https://github.com/golang/exp/blob/master/shiny/driver/internal/swizzle/swizzle_common.go#L13
+func BGRA(p []uint8) {
+	for i := 0; i < len(p); i += 4 {
+		p[i+0], p[i+2] = p[i+2], p[i+0]
+	}
 }
 
 type Office struct {
@@ -83,6 +90,7 @@ const (
 	OtherDocument
 )
 
+// Types of tile color mode
 const (
 	RGBATilemode = iota
 	BGRATilemode
@@ -189,17 +197,18 @@ func (document *Document) GetPartPageRectangles() []image.Rectangle {
 			i, _ := strconv.Atoi(point)
 			intPoints = append(intPoints, i)
 		}
-		x0, y0, x1, y1 := intPoints[0], intPoints[1], intPoints[2], intPoints[3]
+		x0, y0 := intPoints[0], intPoints[1]
+		x1, y1 := x0+intPoints[2], y0+intPoints[3]
 		rectangles = append(rectangles, image.Rect(x0, y0, x1, y1))
 	}
 	return rectangles
 }
 
 // PaintTile renders tile to given buf (which size must be a `4 * canvasWidth * canvasHeight`)
-func (document *Document) PaintTile(buf []C.uchar, canvasWidth int, canvasHeight int, tilePosX int, tilePosY int, tileWidth int, tileHeight int) {
+func (document *Document) PaintTile(buf unsafe.Pointer, canvasWidth int, canvasHeight int, tilePosX int, tilePosY int, tileWidth int, tileHeight int) {
 	C.paint_tile(
 		document.handle,
-		(*C.uchar)(unsafe.Pointer(&buf[0])),
+		(*C.uchar)(buf),
 		(C.int)(canvasWidth),
 		(C.int)(canvasHeight),
 		(C.int)(tilePosX),
