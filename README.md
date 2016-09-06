@@ -58,14 +58,15 @@ func main() {
 }
 ```
 
-Next example demonstrates how to use built-in LibreOffice rendering (result will looks like [this](http://i.imgur.com/GozPaFc.png)).
+Next example demonstrates how to use built-in LibreOffice rendering engine for creating page-by-page documents previews.
 
 ```go
 package main
 
 import (
-    "bufio"
     "os"
+    "fmt"
+    "unsafe"
     "image"
     "image/png"
 )
@@ -73,26 +74,20 @@ import "github.com/docsbox/go-libreofficekit"
 
 func main() {
     office, _ := libreofficekit.NewOffice("/path/to/libreoffice")
-    
     document, _ := office.LoadDocument("kittens.docx")
-    // Get document width & height, in twips (1 twip = 1/1440 of inch)
-    width, height := document.GetSize()
-    // Convert document width/height to pixels with DPI = 100
-    canvasWidth := libreofficekit.TwipsToPixels(width, 100)
-    canvasHeight := libreofficekit.TwipsToPixels(height, 100)
-    buf := make([]_Ctype_uchar, 4*canvasWidth*canvasHeight)
-    document.PaintTile(buf, canvasWidth, canvasHeight, 0, 0, width, height)
+
+    rectangles := document.GetPartPageRectangles()
+    canvasWidth := libreofficekit.TwipsToPixels(rectangles[0].Dx(), 120)
+    canvasHeight := libreofficekit.TwipsToPixels(rectangles[0].Dy(), 120)
+
     m := image.NewRGBA(image.Rect(0, 0, canvasWidth, canvasHeight))
-    pixels := make([]uint8, len(buf))
-    for i := 0; i < len(buf); i++ {
-        pixels[i] = (uint8)(buf[i])
+
+    for i, rectangle := range rectangles {
+        document.PaintTile(unsafe.Pointer(&m.Pix[0]), canvasWidth, canvasHeight, rectangle.Min.X, rectangle.Min.Y, rectangle.Dx(), rectangle.Dy())
+        libreofficekit.BGRA(m.Pix)
+        out, _ := os.Create(fmt.Sprintf("page_%v.png", i))
+        png.Encode(out, m)
+        out.Close()
     }
-    m.Pix = pixels
-    out, _ := os.Create("output.png")
-    defer out.Close()
-    outBuf := bufio.NewWriter(out)
-    png.Encode(out, m)
-    document.Close()
-    office.Close()
 }
 ```
