@@ -204,7 +204,8 @@ func (document *Document) GetPartPageRectangles() []image.Rectangle {
 	return rectangles
 }
 
-// PaintTile renders tile to given buf (which size must be a `4 * canvasWidth * canvasHeight`)
+// PaintTile renders tile to given buf (which size must be a `4 * canvasWidth * canvasHeight`).
+// In practice buf must be a pointer to image.Image.Pix array's first element, e.g. unsafe.Pointer(&image.Pix[0])
 func (document *Document) PaintTile(buf unsafe.Pointer, canvasWidth int, canvasHeight int, tilePosX int, tilePosY int, tileWidth int, tileHeight int) {
 	C.paint_tile(
 		document.handle,
