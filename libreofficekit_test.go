@@ -5,7 +5,9 @@ import (
 )
 
 const (
-	DefaultLibreOfficePath = "/usr/lib/libreoffice/program/"
+	DefaultLibreOfficePath  = "/usr/lib/libreoffice/program/"
+	DocumentThatDoesntExist = "data/kittens.docx"
+	SampleDocument          = "data/sample.docx"
 )
 
 func TestInvalidOfficePath(t *testing.T) {
@@ -17,6 +19,31 @@ func TestInvalidOfficePath(t *testing.T) {
 
 func TestValidOfficePath(t *testing.T) {
 	_, err := NewOffice(DefaultLibreOfficePath)
+	if err != nil {
+		t.Fail()
+	}
+}
+
+func TestGetOfficeErrorMessage(t *testing.T) {
+	office, _ := NewOffice(DefaultLibreOfficePath)
+	office.LoadDocument(DocumentThatDoesntExist)
+	message := office.GetError()
+	if len(message) == 0 {
+		t.Fail()
+	}
+}
+
+func TestLoadDocumentThatDoesntExist(t *testing.T) {
+	office, _ := NewOffice(DefaultLibreOfficePath)
+	_, err := office.LoadDocument(DocumentThatDoesntExist)
+	if err == nil {
+		t.Fail()
+	}
+}
+
+func TestSuccessLoadDocument(t *testing.T) {
+	office, _ := NewOffice(DefaultLibreOfficePath)
+	_, err := office.LoadDocument(SampleDocument)
 	if err != nil {
 		t.Fail()
 	}
