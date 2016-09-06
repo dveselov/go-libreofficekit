@@ -20,10 +20,12 @@ func TwipsToPixels(twips int, dpi int) int {
 	return int(float32(twips) / 1440.0 * float32(dpi))
 }
 
+// PixelsToTwips is like TwipsToPixels, but to another way
 func PixelsToTwips(pixels int, dpi int) int {
 	return int((float32(pixels) / float32(dpi)) * 1440.0)
 }
 
+// BGRA converts BGRA array of pixels to RGBA
 // https://github.com/golang/exp/blob/master/shiny/driver/internal/swizzle/swizzle_common.go#L13
 func BGRA(p []uint8) {
 	for i := 0; i < len(p); i += 4 {
@@ -36,6 +38,8 @@ type Office struct {
 	mutex  *sync.Mutex
 }
 
+// NewOffice returns new Office or error if LibreOfficeKit fails to load
+// required libs (actually, when libreofficekit-dev package isn't installed or path is invalid)
 func NewOffice(path string) (*Office, error) {
 	office := new(Office)
 
@@ -54,15 +58,19 @@ func NewOffice(path string) (*Office, error) {
 
 }
 
+// Close destroys C LibreOfficeKit instance
 func (office *Office) Close() {
 	C.destroy_office(office.handle)
 }
 
+// GetError returns last happened error message in human-readable format
 func (office *Office) GetError() string {
 	message := C.get_error(office.handle)
 	return C.GoString(message)
 }
 
+// LoadDocument return Document or error, if LibreOffice fails to open document at provided path.
+// Actual error message can be retrieved by office.GetError method
 func (office *Office) LoadDocument(path string) (*Document, error) {
 	document := new(Document)
 	cPath := C.CString(path)
@@ -181,10 +189,14 @@ func (document *Document) GetViews() int {
 	return int(C.get_views(document.handle))
 }
 
+// GetTileMode returns tile mode of document, currently only RGBA or BGRA (5.2).
+// You can compare returned int with RGBATilemode / BGRATilemode.
 func (document *Document) GetTileMode() int {
 	return int(C.get_tile_mode(document.handle))
 }
 
+// GetPartPageRectangles array of image.Rectangle, with actually TextDocument page
+// rectangles. Useful, when rendering text document page-by-page.
 func (document *Document) GetPartPageRectangles() []image.Rectangle {
 	var rectangles []image.Rectangle
 	rawRectangles := C.GoString(C.get_part_page_rectangles(document.handle))
