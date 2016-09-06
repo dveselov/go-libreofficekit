@@ -48,3 +48,48 @@ func TestSuccessLoadDocument(t *testing.T) {
 		t.Fail()
 	}
 }
+
+func TestGetPartPageRectangles(t *testing.T) {
+	office, _ := NewOffice(DefaultLibreOfficePath)
+	document, _ := office.LoadDocument(SampleDocument)
+	rectangles := document.GetPartPageRectangles()
+	if len(rectangles) != 2 {
+		t.Fail()
+	}
+}
+
+func TestGetParts(t *testing.T) {
+	office, _ := NewOffice(DefaultLibreOfficePath)
+	document, _ := office.LoadDocument(SampleDocument)
+	parts := document.GetParts()
+	if parts != 2 {
+		t.Fail()
+	}
+}
+
+func TestGetTileMode(t *testing.T) {
+	office, _ := NewOffice(DefaultLibreOfficePath)
+	document, _ := office.LoadDocument(SampleDocument)
+	mode := document.GetTileMode()
+	if mode != RGBATilemode && mode != BGRATilemode {
+		t.Fail()
+	}
+}
+
+func TestGetViews(t *testing.T) {
+	office, _ := NewOffice(DefaultLibreOfficePath)
+	document, _ := office.LoadDocument(SampleDocument)
+	views := document.GetViews()
+	if views != 1 {
+		t.Fail()
+	}
+}
+
+func TestGetType(t *testing.T) {
+	office, _ := NewOffice(DefaultLibreOfficePath)
+	document, _ := office.LoadDocument(SampleDocument)
+	documentType := document.GetType()
+	if documentType != TextDocument {
+		t.Fail()
+	}
+}
