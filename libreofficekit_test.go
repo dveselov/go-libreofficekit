@@ -6,8 +6,8 @@ import (
 
 const (
 	DefaultLibreOfficePath  = "/usr/lib/libreoffice/program/"
-	DocumentThatDoesntExist = "data/kittens.docx"
-	SampleDocument          = "data/sample.docx"
+	DocumentThatDoesntExist = "testdata/kittens.docx"
+	SampleDocument          = "testdata/sample.docx"
 )
 
 func TestInvalidOfficePath(t *testing.T) {
