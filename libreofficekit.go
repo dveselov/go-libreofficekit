@@ -104,6 +104,11 @@ const (
 	BGRATilemode
 )
 
+const (
+	SetGraphicSelectionStart = iota
+	SetGraphicSelectionEnd
+)
+
 type Document struct {
 	handle *C.struct__LibreOfficeKitDocument
 }
@@ -193,6 +198,25 @@ func (document *Document) GetViews() int {
 // You can compare returned int with RGBATilemode / BGRATilemode.
 func (document *Document) GetTileMode() int {
 	return int(C.get_tile_mode(document.handle))
+}
+
+func (document *Document) GetTextSelection(mimetype string) string {
+	cMimetype := C.CString(mimetype)
+	defer C.free(unsafe.Pointer(cMimetype))
+	return C.GoString(C.get_text_selection(document.handle, cMimetype))
+}
+
+func (document *Document) SetTextSelection(sType int, x int, y int) {
+	C.set_text_selection(
+		document.handle,
+		C.int(sType),
+		C.int(x),
+		C.int(y),
+	)
+}
+
+func (document *Document) ResetTextSelection() {
+	C.reset_selection(document.handle)
 }
 
 // GetPartPageRectangles array of image.Rectangle, with actually TextDocument page

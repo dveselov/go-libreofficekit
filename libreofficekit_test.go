@@ -93,3 +93,20 @@ func TestGetType(t *testing.T) {
 		t.Fail()
 	}
 }
+
+func TestTextSelection(t *testing.T) {
+	office, _ := NewOffice(DefaultLibreOfficePath)
+	document, _ := office.LoadDocument(SampleDocument)
+	rectangle := document.GetPartPageRectangles()[0]
+	document.SetTextSelection(SetGraphicSelectionStart, rectangle.Min.X, rectangle.Min.Y)
+	document.SetTextSelection(SetGraphicSelectionEnd, rectangle.Max.X, rectangle.Max.Y)
+	plaintext := document.GetTextSelection("text/plain;charset=utf-8")
+	if len(plaintext) < 1000 {
+		t.Fail()
+	}
+	document.ResetTextSelection()
+	plaintext = document.GetTextSelection("text/plain;charset=utf-8")
+	if len(plaintext) != 0 {
+		t.Fail()
+	}
+}

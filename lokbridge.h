@@ -11,6 +11,10 @@ char* get_error(LibreOfficeKit* pThis) {
     return pThis->pClass->getError(pThis);
 };
 
+void free_error(LibreOfficeKit* pThis, char* message) {
+    return pThis->pClass->freeError(message);
+}
+
 char* get_filter_types(LibreOfficeKit* pThis) {
     return pThis->pClass->getFilterTypes(pThis);
 };
@@ -76,4 +80,16 @@ int get_tile_mode(LibreOfficeKitDocument* pThis) {
 
 char* get_part_page_rectangles(LibreOfficeKitDocument* pThis) {
     return pThis->pClass->getPartPageRectangles(pThis);
+};
+
+void set_text_selection(LibreOfficeKitDocument* pThis, int nType, int nX, int nY) {
+    return pThis->pClass->setTextSelection(pThis, nType, nX, nY);
+};
+
+void reset_selection(LibreOfficeKitDocument* pThis) {
+    return pThis->pClass->resetSelection(pThis);
+};
+
+char* get_text_selection(LibreOfficeKitDocument* pThis, const char* pMimeType) {
+    return pThis->pClass->getTextSelection(pThis, pMimeType, NULL);
 };
