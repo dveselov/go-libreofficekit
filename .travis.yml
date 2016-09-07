@@ -4,5 +4,6 @@ services:
   - docker
 before_install:
   - sudo docker build -t go-libreofficekit .
-script:
   - sudo docker run go-libreofficekit go test
+script:
+  - echo
