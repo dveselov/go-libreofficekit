@@ -52,7 +52,7 @@ func NewOffice(path string) (*Office, error) {
 	}
 
 	office.handle = lokit
-	office.mutex = &sync.Mutex{}
+	office.Mutex = &sync.Mutex{}
 
 	return office, nil
 
