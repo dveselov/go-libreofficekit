@@ -35,7 +35,7 @@ func BGRA(p []uint8) {
 
 type Office struct {
 	handle *C.struct__LibreOfficeKit
-	mutex  *sync.Mutex
+	Mutex  *sync.Mutex
 }
 
 // NewOffice returns new Office or error if LibreOfficeKit fails to load
