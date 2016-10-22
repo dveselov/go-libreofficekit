@@ -14,3 +14,4 @@ ENV GOPATH /go
 RUN mkdir /go
 ADD . /go/src/github.com/docsbox/go-libreofficekit
 WORKDIR /go/src/github.com/docsbox/go-libreofficekit
+RUN go get github.com/mattn/goveralls
