@@ -14,4 +14,4 @@ ENV GOPATH /go
 RUN mkdir /go
 ADD . /go/src/github.com/docsbox/go-libreofficekit
 WORKDIR /go/src/github.com/docsbox/go-libreofficekit
-RUN echo "go test -race -coverprofile=coverage.txt -covermode=atomic && -t 473da5a7-66ec-45dc-b4ed-eb758ce8a66b" > test.sh
+RUN echo "go test -race -coverprofile=coverage.txt -covermode=atomic && bash <(curl -s https://codecov.io/bash) -t 473da5a7-66ec-45dc-b4ed-eb758ce8a66b" > test.sh
