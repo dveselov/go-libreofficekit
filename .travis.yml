@@ -4,4 +4,4 @@ services:
 before_install:
   - sudo docker build -t go-libreofficekit .
 script:
-  - sudo docker run go-libreofficekit goveralls -repotoken TrNdahkMkZk2j8NXDymCl4tTtE2hcRuBt
+  - sudo docker run go-libreofficekit /go/bin/goveralls -repotoken TrNdahkMkZk2j8NXDymCl4tTtE2hcRuBt
