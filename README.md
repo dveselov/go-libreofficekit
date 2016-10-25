@@ -1,4 +1,5 @@
-# go-libreofficekit [![Build Status](https://travis-ci.org/docsbox/go-libreofficekit.svg?branch=master)](https://travis-ci.org/docsbox/go-libreofficekit) [![](https://godoc.org/github.com/docsbox/go-libreofficekit?status.svg)](https://godoc.org/github.com/docsbox/go-libreofficekit) [![Go Report Card](https://goreportcard.com/badge/github.com/docsbox/go-libreofficekit)](https://goreportcard.com/report/github.com/docsbox/go-libreofficekit)
+# go-libreofficekit [![Build Status](https://travis-ci.org/docsbox/go-libreofficekit.svg?branch=master)](https://travis-ci.org/docsbox/go-libreofficekit) [![](https://godoc.org/github.com/docsbox/go-libreofficekit?status.svg)](https://godoc.org/github.com/docsbox/go-libreofficekit) [![Go Report Card](https://goreportcard.com/badge/github.com/docsbox/go-libreofficekit)](https://goreportcard.com/report/github.com/docsbox/go-libreofficekit) [![codecov](https://codecov.io/gh/docsbox/go-libreofficekit/branch/master/graph/badge.svg)](https://codecov.io/gh/docsbox/go-libreofficekit)
+
 CGo bindings to [LibreOfficeKit](https://docs.libreoffice.org/libreofficekit.html)
 
 # Install
