@@ -190,8 +190,8 @@ func (document *Document) GetView() int {
 }
 
 // GetViews returns total number of views in document
-func (document *Document) GetViews() int {
-	return int(C.get_views(document.handle))
+func (document *Document) GetViewsCount() int {
+	return int(C.get_views_count(document.handle))
 }
 
 // GetTileMode returns tile mode of document, currently only RGBA or BGRA (5.2).
