@@ -76,10 +76,10 @@ func TestGetTileMode(t *testing.T) {
 	}
 }
 
-func TestGetViews(t *testing.T) {
+func TestGetViewsCount(t *testing.T) {
 	office, _ := NewOffice(DefaultLibreOfficePath)
 	document, _ := office.LoadDocument(SampleDocument)
-	views := document.GetViews()
+	views := document.GetViewsCount()
 	if views != 1 {
 		t.Fail()
 	}
