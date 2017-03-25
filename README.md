@@ -18,7 +18,7 @@ This example demonstrates how to convert Microsoft Office document to PDF
 ```go
 package main
 
-import "github.com/docsbox/go-libreofficekit"
+import "github.com/dveselov/go-libreofficekit"
 
 func main() {
     office, _ := libreofficekit.NewOffice("/path/to/libreoffice")
@@ -38,7 +38,7 @@ This example demonstrates how to get presentation slides titles
 package main
 
 import "fmt"
-import "github.com/docsbox/go-libreofficekit"
+import "github.com/dveselov/go-libreofficekit"
 
 func main() {
     office, _ := libreofficekit.NewOffice("/path/to/libreoffice")
@@ -71,7 +71,7 @@ import (
     "image"
     "image/png"
 )
-import "github.com/docsbox/go-libreofficekit"
+import "github.com/dveselov/go-libreofficekit"
 
 func main() {
     office, _ := libreofficekit.NewOffice("/path/to/libreoffice")
