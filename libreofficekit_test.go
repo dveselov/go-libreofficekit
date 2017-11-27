@@ -2,12 +2,15 @@ package libreofficekit
 
 import (
 	"testing"
+	"os"
 )
 
 const (
 	DefaultLibreOfficePath  = "/usr/lib/libreoffice/program/"
 	DocumentThatDoesntExist = "testdata/kittens.docx"
 	SampleDocument          = "testdata/sample.docx"
+	SaveDocumentPath        = "/tmp/out.docx"
+	SaveDocumentFormat      = "docx"
 )
 
 func TestInvalidOfficePath(t *testing.T) {
@@ -47,6 +50,21 @@ func TestSuccessLoadDocument(t *testing.T) {
 	if err != nil {
 		t.Fail()
 	}
+}
+
+func TestSuccessfulLoadAndSaveDocument(t *testing.T) {
+	office, _ := NewOffice(DefaultLibreOfficePath)
+	doc, err := office.LoadDocument(SampleDocument)
+	if err != nil {
+		t.Fail()
+	}
+
+	err = doc.SaveAs(SaveDocumentPath, SaveDocumentFormat, "")
+	if err != nil {
+		t.Fail()
+	}
+
+	defer os.Remove(SaveDocumentPath)
 }
 
 func TestGetPartPageRectangles(t *testing.T) {

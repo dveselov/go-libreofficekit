@@ -173,7 +173,7 @@ func (document *Document) SaveAs(path string, format string, filter string) erro
 	cFilter := C.CString(filter)
 	defer C.free(unsafe.Pointer(cFilter))
 	status := C.document_save(document.handle, cPath, cFormat, cFilter)
-	if status != 0 {
+	if status != 1 {
 		return fmt.Errorf("Failed to save document")
 	}
 	return nil
