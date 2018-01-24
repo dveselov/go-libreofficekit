@@ -3,7 +3,6 @@ MAINTAINER Dmitry Veselov <d.a.veselov@yandex.ru>
 
 RUN apt-get update
 RUN apt-get install -y software-properties-common
-RUN add-apt-repository -y ppa:ubuntu-lxc/lxd-stable
 RUN add-apt-repository -y ppa:libreoffice/ppa 
 RUN apt-get update
 RUN apt-get install -y golang git curl
